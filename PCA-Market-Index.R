@@ -6,3 +6,13 @@ price <- transform(prices, Date=ymd(Date))
 require(reshape)
 date.stock.matrix <- cast(prices,Date~Stock,value='Close')
 head(date.stock.matrix)
+prices <- subset(prices, Date != ymd('2002-02-01'))
+prices <- subset(prices, Stock != 'DDR')
+date.stock.matrix <- cast(prices, Date~Stock, value='Close')
+
+# find correlations
+cor.matrix <- cor(date.stock.matrix[,2:ncol(date.stock.matrix)])
+correlations <- as.numeric(cor.matrix)
+require(ggplot2)
+p <- ggplot(data.frame(Correlation=correlations), aes(x=Correlation, fill=1))
+p + geom_density() + theme(legend.position='none') + ggsave('cor.png')
