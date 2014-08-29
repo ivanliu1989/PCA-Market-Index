@@ -38,3 +38,21 @@ dates <- with(dji.prices, rev(Date))
 comparison <- data.frame(Date=dates,MarketIndex=market.index, DJI=dji)
 p3 <- ggplot(comparison, aes(x=MarketIndex,y=DJI))
 p3 + geom_point()+geom_smooth(method='lm',se=F)+ggsave('comparison.png')
+
+# fix
+comparison <- transform(comparison, MarketIndex=-1*MarketIndex)
+p4 <- ggplot(comparison, aes(x=MarketIndex,y=DJI))
+p4 + geom_point()+geom_smooth(method='lm',se=F)+ggsave('comparison_2.png')
+
+# scale
+comparison <- transform(comparison, MarketIndex = scale(MarketIndex))
+comparison <- transform(comparison, DJI = scale(DJI))
+
+alt.comparison <- melt(comparison, id.vars = 'Date')
+
+names(alt.comparison) <- c('Date', 'Index', 'Price')
+png('comparison3.png')
+ggplot(alt.comparison, aes(x = Date, y = Price, group = Index, color = Index)) +
+    geom_point() +
+    geom_line()
+dev.off()
